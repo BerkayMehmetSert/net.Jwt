@@ -6,7 +6,7 @@ This project is a .NET Core web API that allows user registration and authentica
 
 1. Clone the repository
 ```
-git clone https://github.com/BerkayMehmetSert/net.GenericRepository.git
+git clone https://github.com/BerkayMehmetSert/net.Jwt.git
 ```
 
 2. Install dependencies
