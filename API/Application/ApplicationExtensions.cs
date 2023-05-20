@@ -12,5 +12,6 @@ public static class ApplicationExtensions
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IJwtOptionService, JwtOptionService>();
     }
 }

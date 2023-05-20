@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
-using API.Application.Constants.Config;
 using API.Application.Constants.Repositories;
 using API.Application.Constants.Requests.Tokens;
 using API.Application.Constants.Responses.Tokens;
@@ -18,12 +17,12 @@ namespace API.Application.Services;
 public class TokenService : ITokenService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly JwtConfig _jwtConfig;
+    private readonly IJwtOptionService _jwtOptionService;
 
-    public TokenService(IUnitOfWork unitOfWork, IConfiguration configuration)
+    public TokenService(IUnitOfWork unitOfWork, IJwtOptionService jwtOptionService)
     {
         _unitOfWork = unitOfWork;
-        _jwtConfig = configuration.GetSection("JwtConfig").Get<JwtConfig>();
+        _jwtOptionService = jwtOptionService;
     }
 
     public TokenResponse GenerateToken(CreateTokenRequest request)
@@ -32,7 +31,7 @@ public class TokenService : ITokenService
 
         if (user is null) throw new NotFoundException(UserNotFound);
         CheckIfUserPasswordIsCorrect(user, request.Password);
-        
+
         if (user.Role is null) throw new AuthenticationException(UserRoleNotFound);
 
         var token = GenerateJwtToken(user, CalculateDate.GetCurrentDate());
@@ -40,7 +39,7 @@ public class TokenService : ITokenService
         return new TokenResponse
         {
             AccessToken = token,
-            ExpireTime = CalculateDate.GetCurrentDate().AddMinutes(_jwtConfig.AccessTokenExpiration),
+            ExpireTime = CalculateDate.GetCurrentDate().AddMinutes(JwtOption.AccessTokenExpiration),
             Role = user.Role
         };
     }
@@ -49,13 +48,13 @@ public class TokenService : ITokenService
     {
         var claims = GetClaim(user);
 
-        var secret = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
+        var secret = Encoding.ASCII.GetBytes(JwtOption.Secret);
 
         var jwtToken = new JwtSecurityToken(
-            _jwtConfig.Issuer,
-            _jwtConfig.Audience,
+            JwtOption.Issuer,
+            JwtOption.Audience,
             claims,
-            expires: dateTime.AddMinutes(_jwtConfig.AccessTokenExpiration),
+            expires: dateTime.AddMinutes(JwtOption.AccessTokenExpiration),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(secret),
                 SecurityAlgorithms.HmacSha256Signature));
 
@@ -83,4 +82,6 @@ public class TokenService : ITokenService
     {
         if (user.Password != password) throw new BusinessException(UserPasswordIncorrect);
     }
+
+    private JwtOption JwtOption => _jwtOptionService.GetJwtOption();
 }

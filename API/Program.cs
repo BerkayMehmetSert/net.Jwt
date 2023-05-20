@@ -1,5 +1,7 @@
+using System.Text;
 using API.Application;
 using API.Application.Constants.Extensions;
+using API.Application.Constants.Services;
 using API.Infrastructure.Exceptions;
 using API.Persistence;
 
@@ -10,9 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplicationServices();
-builder.Services.AddJwtServices(builder.Configuration);
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddCustomSwaggerServices();
+builder.Services.AddJwtServices(builder.Services.BuildServiceProvider());
 
 var app = builder.Build();
 

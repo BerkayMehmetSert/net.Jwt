@@ -12,7 +12,8 @@ public class BaseDbContext : DbContext
     
     public DbSet<Product> Products { get; set; }
     public DbSet<User> Users { get; set; }
-    
+    public DbSet<JwtOption> JwtOptions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

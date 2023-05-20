@@ -11,12 +11,14 @@ public class UnitOfWork : IUnitOfWork
 
     public IBaseRepository<Product> ProductRepository { get; private set; }
     public IBaseRepository<User> UserRepository { get; private set; }
+    public IBaseRepository<JwtOption> JwtOptionRepository { get; private set; }
 
     public UnitOfWork(BaseDbContext context)
     {
         _context = context;
         ProductRepository = new BaseRepository<Product>(context);
         UserRepository = new BaseRepository<User>(context);
+        JwtOptionRepository = new BaseRepository<JwtOption>(context);
     }
 
     public void SaveChanges()
